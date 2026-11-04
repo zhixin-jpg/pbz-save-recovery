@@ -7,6 +7,12 @@ description: Recover game saves that were overwritten, deleted, or replaced by a
 
 Find the best recoverable copy, protect it, restore it, and stop cloud sync from overwriting it again.
 
+## Scope
+
+- Tested on Windows 11 + Steam. macOS and Linux paths are included, but verify them on the user's machine before acting.
+- Works on local save files with backups or rotations. It does not recover server-side progress, console cloud containers (opaque/encrypted), or anti-cheat-protected saves.
+- This is a procedure, not an automated tool. The user must approve every write.
+
 ## Non-negotiables
 
 - Do not write anything until the game and its launcher are fully closed (Steam, Epic, GOG, Xbox app).
