@@ -66,6 +66,15 @@ PBZSaveGame.sav          当前正在用的存档
 
 如果不会解码，也可以间接判断：把候选文件按修改时间排列，结合你还记得的关卡/时长，挑出最像最后进度的一份。但恢复前最好还是做一次解码校验。
 
+示例候选表（本次恢复，已脱敏）：
+
+| 候选文件 | 文件时间 | 存档内时间 | 关卡 / 主线 | 游戏时长 | 判断 |
+|---|---|---|---|---|---|
+| `2Hourly/20261101-224501-344.sav` | 11-01 22:45 | 11-01 22:45 | 磐镇 / `MainCh2-SiZhen` | 15h29m | 匹配，选它 |
+| `20261103-172658-417.sav` | 11-03 17:26 | 11-03 17:25 | 西古 / 新档 | 3h06m | 最新，但不是目标进度 |
+
+这张表的重点不是文件名，而是最后两列：**关卡/主线**和**游戏时长**。文件名最新的那份，往往属于覆盖进来的新档。
+
 ## 4. 回档
 
 1. 确认 Steam 已完全退出。
@@ -126,9 +135,23 @@ python -c "from pathlib import Path; from pbz_save_manager.container import pars
 - 共号时约定好谁在玩，避免两台设备同时推进度。
 - 重要节点留一个手动存档，不要只依赖自动存档。
 
+## 适用边界
+
+- **实测环境**：Windows 11 + Steam 版《影之刃零》（2026-11）。其他游戏/平台沿用同一思路，但路径和备份机制需要自行确认。
+- **适用**：本地存档、平台自带的轮转备份、可以复制的存档文件（Steam / Epic / GOG / 独立游戏）。
+- **不适用**：纯服务器侧存档（在线游戏）、Xbox / PlayStation 云存档（容器不透明或加密）、有反作弊或账号绑定的存档。
+- **不是自动化工具**：本仓库提供流程和 skill，所有写操作都需要你确认，恢复前必须整目录备份。
+- **不保证一定找回**：备份越早复制，成功率越高；备份已被游戏清理时可能无解。
+
 ## 作为 Claude Code skill 使用
 
 [`skill/save-rescue`](skill/save-rescue/SKILL.md) 是一个通用版技能，适用于任何平台的存档覆盖/丢失，不只《影之刃零》。它的核心约束是：先确认游戏已退出、恢复前整目录备份、不盲覆盖、恢复后断云同步校验。
+
+触发示例：
+
+> 我的存档被覆盖了：影之刃零，Steam，Windows。游戏和 Steam 都已经退出。原本进度是第二章磐镇，15 小时左右，死亡 60 多次。
+
+然后 skill 会按 intake → 定位 → 证据 → 候选表 → 安全恢复 → 防再覆盖的顺序处理，而不是直接让你覆盖文件。
 
 安装（个人技能目录）：
 
@@ -148,6 +171,16 @@ cp -R ./skill/save-rescue ~/.claude/skills/save-rescue
 
 一次真实的共用账号覆盖事故、时间线和恢复过程，见 [docs/case-2026-11-steam-cloud-overwrite.md](docs/case-2026-11-steam-cloud-overwrite.md)。
 
+## English summary
+
+A safety-first guide and a Claude Code skill for recovering game saves that were overwritten by a new save or a cloud sync conflict. Tested on Windows 11 with the Steam version of *Phantom Blade Zero*; the workflow applies to other local-save games, but save paths must be verified per game. It does not cover server-side saves, console cloud containers, or anti-cheat-protected data.
+
+The skill lives in [`skill/save-rescue`](skill/save-rescue/SKILL.md). Copy it to `~/.claude/skills/save-rescue`, then ask: "My save was overwritten, the game is X, platform Y, and the game is closed." It gathers evidence, builds a candidate table, backs up the entire save folder, and only then restores.
+
 ## 相关
 
 - [pbz-save-manager](https://github.com/Orisland/pbz-save-manager)：可回档、查看槽位、在备份后修改少量数值的本地工具。
+
+## 许可
+
+MIT，见 [LICENSE](LICENSE)。
