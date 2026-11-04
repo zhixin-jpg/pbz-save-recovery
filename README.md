@@ -4,7 +4,7 @@
 
 实际上，游戏自己会在本地保留三组历史备份。只要备份还在，绝大多数情况都能按时间回档，把进度找回来。
 
-本仓库只记录排查与恢复流程，不包含任何游戏文件或第三方代码。
+本仓库记录排查与恢复流程，并附一个可复用的 Claude Code skill：[`skill/save-rescue/SKILL.md`](skill/save-rescue/SKILL.md)。不包含任何游戏文件或第三方代码。
 
 > 非官方文档，与游戏开发商、发行商无关。任何写存档的操作都有风险，操作前务必备份。
 
@@ -125,6 +125,24 @@ python -c "from pathlib import Path; from pbz_save_manager.container import pars
 - 关掉这个游戏的 Steam 云存档，改用本地/手动备份；或者接受云同步但每次换设备前先确认状态。
 - 共号时约定好谁在玩，避免两台设备同时推进度。
 - 重要节点留一个手动存档，不要只依赖自动存档。
+
+## 作为 Claude Code skill 使用
+
+[`skill/save-rescue`](skill/save-rescue/SKILL.md) 是一个通用版技能，适用于任何平台的存档覆盖/丢失，不只《影之刃零》。它的核心约束是：先确认游戏已退出、恢复前整目录备份、不盲覆盖、恢复后断云同步校验。
+
+安装（个人技能目录）：
+
+```powershell
+# Windows
+Copy-Item -Recurse ".\skill\save-rescue" "$env:USERPROFILE\.claude\skills\save-rescue"
+```
+
+```bash
+# macOS / Linux
+cp -R ./skill/save-rescue ~/.claude/skills/save-rescue
+```
+
+重新打开 Claude Code，然后说「我的存档被覆盖了，游戏是 XXX」，它会按 intake → 定位 → 证据 → 候选表 → 安全恢复 → 防再覆盖的顺序处理。
 
 ## 案例
 
